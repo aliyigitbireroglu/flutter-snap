@@ -75,10 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
 																	                  crossAxisAlignment: CrossAxisAlignment.start,
 																									  children:[
 																									    SnapController(
-																											  normalBox(
-																												  views[0],
-																											    "Move & Snap", 
-																											    Colors.redAccent),
+																											  firstNormalBoxBuilder,
 																											  false,
 																											  views[0],
 																											  bounds[0],
@@ -113,10 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
 																											    bottom: bottom,
 																											    duration: Duration(milliseconds: 300),
 																											    child:SnapController(
-																																  normalBox(
-																																	  views[1],
-																																    "Move & Snap", 
-																																    Colors.redAccent),
+																																  animatedBoxBuilder,
 																																  false,
 																																  views[1],
 																																  bounds[1],
@@ -146,10 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
 																	                  crossAxisAlignment: CrossAxisAlignment.start,
 																									  children:[
 																									    SnapController(
-																											  dottedBox(
-																												  views[2],
-																											    "Move & Snap", 
-																											    Colors.redAccent),
+																											  dottedBoxBuilder,
 																											  false,
 																											  views[2],
 																											  bounds[2],
@@ -182,10 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
 																	                  crossAxisAlignment: CrossAxisAlignment.center,
 																									  children:[
 																									    SnapController(
-																											  translatedBox(
-																												  views[3],
-																											    "Move & Snap", 
-																											    Colors.redAccent),
+																											  translatedBoxBuilder,
 																											  false,
 																											  views[3], 
 																											  bounds[3],
@@ -218,10 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
 																                  crossAxisAlignment: CrossAxisAlignment.start,
 																								  children:[
 																								    SnapController(
-																										  smallBox(
-																											  views[4],
-																										    "*", 
-																										    Colors.redAccent),
+																										  smallBoxBuilder,
 																										  false,
 																										  views[4], 
 																										  bounds[4],
@@ -251,10 +236,7 @@ class _MyHomePageState extends State<MyHomePage> {
 																	                  crossAxisAlignment: CrossAxisAlignment.start,
 																									  children:[
 																									    SnapController(
-																											  normalBox(
-																												  views[5],
-																											    "Move & Snap", 
-																											    Colors.redAccent),
+																											  secondNormalBoxBuilder,
 																											  false,
 																											  views[5],
 																											  bounds[5],
@@ -302,6 +284,48 @@ Widget gap(){
 																	      fontWeight: FontWeight.bold, 
 																	      fontSize: 10),
 													      textAlign: TextAlign.center)));
+}
+
+Widget firstNormalBoxBuilder(BuildContext context){
+	return normalBox(
+				  views[0],
+			    "Move & Snap", 
+			    Colors.redAccent);
+}
+
+Widget animatedBoxBuilder(BuildContext context){
+	return normalBox(
+				  views[1],
+			    "Move & Snap", 
+			    Colors.redAccent);
+}
+
+Widget dottedBoxBuilder(BuildContext context){
+	return dottedBox(
+				  views[2],
+			    "Move & Snap", 
+			    Colors.redAccent);
+}
+
+Widget translatedBoxBuilder(BuildContext context){
+	return translatedBox(
+				  views[3],
+			    "Move & Snap", 
+			    Colors.redAccent);
+}
+
+Widget smallBoxBuilder(BuildContext context){
+	return smallBox(
+				  views[4],
+			    "*", 
+			    Colors.redAccent);
+}
+
+Widget secondNormalBoxBuilder(BuildContext context){
+	return normalBox( 
+				  views[5],
+			    "Move & Snap", 
+			    Colors.redAccent);
 }
 
 Widget normalBox(Key key, String text, Color color){

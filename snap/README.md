@@ -1,6 +1,6 @@
 # snap
 
-An extensive snap tool/widget for Flutter.
+An extensive snap tool/widget for Flutter that allows very flexible snap management and snapping between your widgets.
 Inspired by WhatsApp's in-app Youtube player. 
 
 ## Media

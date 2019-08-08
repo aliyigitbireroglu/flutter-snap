@@ -12,10 +12,17 @@ import 'package:flutter/material.dart';
 
 import 'Export.dart';
 
+///The widget that is responsible of ALL Snap related logic and UI. It is important to define two essential concepts used for this package:
+///I) The view is what is being moved. It is the widget that snaps to the bound.
+///II) The bound is what the view is being snapped to.
 class SnapController extends StatefulWidget {
-	final Widget child;
+	///The widget that is to be displayed on your UI.
+	final SnapBuilder child;
+	///Set this to true if your [child] doesn't change during the Peek & Pop process.
 	final bool useCache;
+	///The [GlobalKey] of the view.
 	final GlobalKey viewKey;
+	///The [GlobalKey] of the bound.
 	final GlobalKey boundKey;
 	
   ///Use this value to set the lower left boundary of the movement.
@@ -27,11 +34,15 @@ class SnapController extends StatefulWidget {
   ///Use this value to set the upper right elasticity of the movement.
   final Offset flexibilityMax;
   
+  ///Use this value to set a custom bound width. If not set, [SnapController] will automatically calculate it via [boundKey].
   final double customBoundWidth;
+  ///Use this value to set a custom bound height. If not set, [SnapController] will automatically calculate it via [boundKey].
   final double customBoundHeight;
   
+  ///The list of [SnapTarget]s your view can snap to.
   final List<SnapTarget> snapTargets;
   
+  ///Use this value to set whether the snapping should occur directly or via an animation.
   final bool animateSnap;
 
   ///The callback for when the view moves.
@@ -45,15 +56,15 @@ class SnapController extends StatefulWidget {
 					this.viewKey,
 					this.boundKey,
 					this.constraintsMin, 
-			    this.constraintsMax, 
-			    this.flexibilityMin,
-			    this.flexibilityMax,
-			    {Key key, 
+				  this.constraintsMax, 
+				  this.flexibilityMin,
+				  this.flexibilityMax,
+				  {Key key, 
 					this.customBoundWidth:0,
 				  this.customBoundHeight:0,  
-			    this.snapTargets,
+				  this.snapTargets, 
 				  this.animateSnap,  
-			    this.onMove,
+				  this.onMove,
 					this.onSnap}) : super(key:key);
 	
   @override
@@ -75,7 +86,7 @@ class SnapController extends StatefulWidget {
 }
 
 class SnapControllerState extends State<SnapController> with SingleTickerProviderStateMixin {
-	final Widget child;
+	final SnapBuilder child;
 	final bool useCache;
 	final GlobalKey viewKey;
 	final GlobalKey boundKey;
@@ -88,6 +99,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
   final Offset flexibilityMax;
   final List<SnapTarget> snapTargets;
   
+  bool canMove = true;
   final bool animateSnap;
 
   final MoveCallback onMove;
@@ -107,6 +119,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
 	Offset delta = Offset.zero;
   Offset overrideDelta = Offset.zero;
   
+  ///The [AnimationController] used to move the view during snapping if [SnapController.animateSnap] is set to true.
   AnimationController animationController;
   Animation<Offset> animation;
   ValueNotifier<Offset> deltaNotifier = ValueNotifier<Offset>(Offset.zero);
@@ -139,6 +152,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
 				lowerBound: 0, upperBound: 1)
 			..addListener((){
 			  deltaNotifier.value = animation.value;
+			  if(onMove!=null) onMove(deltaNotifier.value);
       })
 			..addStatusListener((_) {});
 		animation = 
@@ -178,7 +192,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
 	    if (viewRenderBox == null) viewRenderBox = viewKey.currentContext.findRenderObject();
 	    
 	    if(viewRenderBox != null){
-		      if(viewRenderBox.hasSize && !viewRenderBox.debugNeedsLayout){
+		      if(viewRenderBox.hasSize){
 		        if(viewWidth == -1)
 			        viewWidth = viewRenderBox.size.width;
 			      if(viewHeight == -1)
@@ -244,7 +258,10 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
     constraintsMax = Offset(constraintsMaxX, constraintsMaxY);
   }
   
-  void beginDrag(DragStartDetails dragStartDetails){
+  void beginDrag(dynamic dragStartDetails){
+  	if (!canMove) return;
+  	if (animationController.isAnimating) return;
+  	
     if (_debugLevel > 0) 
       print("BeginDrag");
     
@@ -254,17 +271,25 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
     beginDragPosition = dragStartDetails.localPosition;
   }
   
-  void updateDrag(DragUpdateDetails dragUpdateDetails){
+  void updateDrag(dynamic dragUpdateDetails){
+  	if (!canMove) return;
+  	if (animationController.isAnimating) return;
+  	
     if (_debugLevel > 0) 
       print("UpdateDrag");
     
     checkViewAndBound();
     
+    if(beginDragPosition == null)
+    	beginDrag(dragUpdateDetails);
     updateDragPosition = dragUpdateDetails.localPosition;
     setDelta();
   }
   
-  void endDrag(DragEndDetails dragEndDetails){
+  void endDrag(dynamic dragEndDetails){
+  	if (!canMove) return;
+  	if (animationController.isAnimating) return;
+  	
     if (_debugLevel > 0) 
       print("EndDrag");
     
@@ -314,8 +339,10 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
   
   Future snap() async{
   	Offset snapTarget = getSnapTarget();
-  	if(animateSnap)
+  	if(animateSnap){
   		await move(snapTarget);
+  		deltaNotifier.value = snapTarget;
+  	}
   	else
   		deltaNotifier.value = snapTarget;
   	
@@ -323,6 +350,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
 	  beginDragPosition = null;
 	  updateDragPosition = null;
 	  overrideDelta = Offset.zero;
+	  
 	  if(onSnap != null) onSnap(deltaNotifier.value);
   }
   
@@ -448,8 +476,9 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
 		return;
 	}
 	
-  bool get isMoved {
-    return deltaNotifier.value.dx.abs() > 10 || deltaNotifier.value.dy.abs() > 10;
+	///Use this function to determine if the view is moved or not.
+  bool isMoved(double treshold) {
+    return deltaNotifier.value.dx.abs() > treshold || deltaNotifier.value.dy.abs() > treshold;
   }
   
   void reset(){
@@ -474,7 +503,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
 										  onHorizontalDragStart: beginDrag,
 										  onHorizontalDragUpdate: updateDrag,
 										  onHorizontalDragEnd: endDrag,
-										  child: child) 
+										  child: child(context)) 
 	                 : null,
 	          builder: 
 	          (BuildContext context, Offset delta, Widget cachedChild) {
@@ -490,7 +519,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
 																			  onHorizontalDragStart: beginDrag,
 																			  onHorizontalDragUpdate: updateDrag,
 																			  onHorizontalDragEnd: endDrag,
-																			  child: child));
+																			  child: child(context)));
 	          },
 	          valueListenable: deltaNotifier);
   }

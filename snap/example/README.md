@@ -1,7 +1,11 @@
+# example
+
+Example Project for snap.
+
 # snap
 
-An extensive snap tool/widget for Flutter. 
-Inspired by WhatsApp's in-app Youtube player.
+An extensive snap tool/widget for Flutter that allows very flexible snap management and snapping between your widgets.
+Inspired by WhatsApp's in-app Youtube player. 
 
 ## Media
 *Videos*
