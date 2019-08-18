@@ -10,21 +10,23 @@
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
-import 'package:snap/Export.dart';
 
-typedef SnapBuilder = Widget Function(BuildContext context);
+import 'Export.dart';
+
 typedef MoveCallback = void Function(Offset offset);
 typedef SnapCallback = void Function(Offset offset);
+typedef DragCallback = void Function(dynamic dragDetails);
 
 class Pivot {
   ///Use this value if you want your view to snap to the closest horizontal side (Left/Right).
-  static Offset closestHorizontal = Offset(12345, 0);
+  static const Offset closestHorizontal = const Offset(12345, 0);
 
   ///Use this value if you want your view to snap to the closest vertical side (Top/Bottom).
-  static Offset closestVertical = Offset(0, 12345);
+  static const Offset closestVertical = const Offset(0, 12345);
 
   ///Use this value if you want your view to snap to the closest side (Left/Right/Left/Right).
-  static Offset closestAny = Offset(12345, 12345);
+  static const Offset closestAny = const Offset(12345, 12345);
+
   static bool isClosestHorizontal(Offset offset) => offset == closestHorizontal;
   static bool isClosestVertical(Offset offset) => offset == closestVertical;
   static bool isClosestAny(Offset offset) => offset == closestAny;

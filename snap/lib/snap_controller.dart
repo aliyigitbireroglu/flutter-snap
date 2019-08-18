@@ -12,6 +12,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:flick/flick.dart';
+import 'misc.dart' as Misc;
 import 'Export.dart';
 
 ///The widget that is responsible of ALL Snap related logic and UI. It is important to define two essential concepts used for this package:
@@ -19,9 +21,9 @@ import 'Export.dart';
 ///II) The bound is what the view is being snapped to.
 class SnapController extends StatefulWidget {
   ///The widget that is to be displayed on your UI.
-  final SnapBuilder child;
+  final Widget uiChild;
 
-  ///Set this to true if your [child] doesn't change during the Peek & Pop process.
+  ///Set this to true if your [uiChild] doesn't change at runtime.
   final bool useCache;
 
   ///The [GlobalKey] of the view.
@@ -54,14 +56,29 @@ class SnapController extends StatefulWidget {
   ///Use this value to set whether the snapping should occur directly or via an animation.
   final bool animateSnap;
 
+  ///Set this to true if you want to use flick.
+  final bool useFlick;
+
+  ///Use this value to set the sensitivity of flick.
+  final double flickSensitivity;
+
   ///The callback for when the view moves.
-  final MoveCallback onMove;
+  final Misc.MoveCallback onMove;
+
+  ///The callback for when the drag starts.
+  final Misc.DragCallback onDragStart;
+
+  ///The callback for when the drag updates.
+  final Misc.DragCallback onDragUpdate;
+
+  ///The callback for when the drag ends.
+  final Misc.DragCallback onDragEnd;
 
   ///The callback for when the view snaps.
   final SnapCallback onSnap;
 
   const SnapController(
-      this.child,
+      this.uiChild,
       this.useCache,
       this.viewKey,
       this.boundKey,
@@ -73,15 +90,19 @@ class SnapController extends StatefulWidget {
       this.customBoundWidth: 0,
       this.customBoundHeight: 0,
       this.snapTargets,
-      this.animateSnap,
+      this.animateSnap: true,
+      this.useFlick: true,
+      this.flickSensitivity: 0.075,
       this.onMove,
+      this.onDragStart,
+      this.onDragUpdate,
+      this.onDragEnd,
       this.onSnap})
       : super(key: key);
 
   @override
   SnapControllerState createState() {
     return SnapControllerState(
-        child,
         useCache,
         viewKey,
         boundKey,
@@ -91,14 +112,19 @@ class SnapController extends StatefulWidget {
         flexibilityMax,
         snapTargets,
         animateSnap,
+        useFlick,
+        flickSensitivity,
         onMove,
+        onDragStart,
+        onDragUpdate,
+        onDragEnd,
         onSnap);
   }
 }
 
 class SnapControllerState extends State<SnapController>
     with SingleTickerProviderStateMixin {
-  final SnapBuilder child;
+  Widget uiChild;
   final bool useCache;
   final GlobalKey viewKey;
   final GlobalKey boundKey;
@@ -113,8 +139,13 @@ class SnapControllerState extends State<SnapController>
 
   bool canMove = true;
   final bool animateSnap;
+  bool useFlick;
+  final double flickSensitivity;
 
-  final MoveCallback onMove;
+  final Misc.MoveCallback onMove;
+  final Misc.DragCallback onDragStart;
+  final Misc.DragCallback onDragUpdate;
+  final Misc.DragCallback onDragEnd;
   final SnapCallback onSnap;
 
   RenderBox viewRenderBox;
@@ -134,13 +165,13 @@ class SnapControllerState extends State<SnapController>
   ///The [AnimationController] used to move the view during snapping if [SnapController.animateSnap] is set to true.
   AnimationController animationController;
   Animation<Offset> animation;
-  ValueNotifier<Offset> deltaNotifier = ValueNotifier<Offset>(Offset.zero);
+  final ValueNotifier<Offset> deltaNotifier =
+      ValueNotifier<Offset>(Offset.zero);
 
   ///Use this value to determine the depth of debug logging that is actually only here for myself and the Swiss scientists.
   int _debugLevel = 0;
 
   SnapControllerState(
-      this.child,
       this.useCache,
       this.viewKey,
       this.boundKey,
@@ -150,12 +181,21 @@ class SnapControllerState extends State<SnapController>
       this.flexibilityMax,
       this.snapTargets,
       this.animateSnap,
+      this.useFlick,
+      this.flickSensitivity,
       this.onMove,
+      this.onDragStart,
+      this.onDragUpdate,
+      this.onDragEnd,
       this.onSnap);
 
   @override
   void initState() {
     super.initState();
+
+    if (!animateSnap) useFlick = false;
+
+    if (useCache) uiChild = wrapper();
 
     animationController = AnimationController(
         vsync: this,
@@ -167,7 +207,7 @@ class SnapControllerState extends State<SnapController>
         if (onMove != null) onMove(deltaNotifier.value);
       })
       ..addStatusListener((_) {});
-    animation = Tween(begin: Offset(0, 0), end: Offset(0, 0)).animate(
+    animation = Tween(begin: Offset.zero, end: Offset.zero).animate(
         CurvedAnimation(
             parent: animationController, curve: Curves.fastOutSlowIn));
 
@@ -282,6 +322,8 @@ class SnapControllerState extends State<SnapController>
 
     delta = deltaNotifier.value;
     beginDragPosition = dragStartDetails.localPosition;
+
+    if (onDragStart != null) onDragStart(dragStartDetails);
   }
 
   void updateDrag(dynamic dragUpdateDetails) {
@@ -295,6 +337,8 @@ class SnapControllerState extends State<SnapController>
     if (beginDragPosition == null) beginDrag(dragUpdateDetails);
     updateDragPosition = dragUpdateDetails.localPosition;
     setDelta();
+
+    if (onDragUpdate != null) onDragUpdate(dragUpdateDetails);
   }
 
   void endDrag(dynamic dragEndDetails) {
@@ -303,8 +347,12 @@ class SnapControllerState extends State<SnapController>
 
     if (_debugLevel > 0) print("EndDrag");
 
-    checkViewAndBound();
+    if (onDragEnd != null) onDragStart(dragEndDetails);
 
+    if (!useFlick) snap();
+  }
+
+  void onFlick(Offset offset) {
     snap();
   }
 
@@ -365,6 +413,7 @@ class SnapControllerState extends State<SnapController>
       boundHeight + boundOrigin.dy - viewHeight - viewOrigin.dy;
 
   Future snap() async {
+    checkViewAndBound();
     Offset snapTarget = getSnapTarget();
     if (animateSnap) {
       await move(snapTarget);
@@ -527,36 +576,40 @@ class SnapControllerState extends State<SnapController>
     deltaNotifier.value = Offset.zero;
   }
 
+  Widget wrapper() {
+    if (useFlick)
+      return FlickController(widget.uiChild, useCache, viewKey,
+          boundKey: boundKey,
+          constraintsMin: constraintsMin,
+          constraintsMax: constraintsMax,
+          flexibilityMin: flexibilityMin,
+          flexibilityMax: flexibilityMax,
+          sensitivity: 0.075,
+          onDragStart: beginDrag,
+          onDragUpdate: updateDrag,
+          onDragEnd: endDrag,
+          onFlick: onFlick);
+    else
+      return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onVerticalDragStart: beginDrag,
+          onVerticalDragUpdate: updateDrag,
+          onVerticalDragEnd: endDrag,
+          onHorizontalDragStart: beginDrag,
+          onHorizontalDragUpdate: updateDrag,
+          onHorizontalDragEnd: endDrag,
+          child: widget.uiChild);
+  }
+
   @override
   Widget build(BuildContext context) {
     checkViewAndBound();
 
     return ValueListenableBuilder(
-        child: useCache
-            ? GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onVerticalDragStart: beginDrag,
-                onVerticalDragUpdate: updateDrag,
-                onVerticalDragEnd: endDrag,
-                onHorizontalDragStart: beginDrag,
-                onHorizontalDragUpdate: updateDrag,
-                onHorizontalDragEnd: endDrag,
-                child: child(context))
-            : null,
+        child: useCache ? uiChild : null,
         builder: (BuildContext context, Offset delta, Widget cachedChild) {
           return Transform.translate(
-              offset: delta,
-              child: useCache
-                  ? cachedChild
-                  : GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onVerticalDragStart: beginDrag,
-                      onVerticalDragUpdate: updateDrag,
-                      onVerticalDragEnd: endDrag,
-                      onHorizontalDragStart: beginDrag,
-                      onHorizontalDragUpdate: updateDrag,
-                      onHorizontalDragEnd: endDrag,
-                      child: child(context)));
+              offset: delta, child: useCache ? cachedChild : wrapper());
         },
         valueListenable: deltaNotifier);
   }
