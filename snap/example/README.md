@@ -24,7 +24,7 @@ Inspired by WhatsApp's in-app Youtube player.
 
 *GIFs*
 <br><br>
-<img src="https://www.cosmossoftware.coffee/Common/Portfolio/GIFs/FlutterSnap.gif"/>
+<img src="https://www.cosmossoftware.coffee/Common/Portfolio/GIFs/FlutterSnapNew.gif"/>
 <br><br>
 
 

@@ -4,6 +4,8 @@
 
 * Fine tuning.
 
+* [1.0.0+1] A minor error in the README is fixed.
+
 ## [0.1.3] - 08.08.2019
 
 * Improved code style.
