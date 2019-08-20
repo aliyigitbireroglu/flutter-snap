@@ -3,6 +3,9 @@
 An extensive snap tool/widget for Flutter that allows very flexible snap management and snapping between your widgets. Inspired by WhatsApp's 
 in-app Youtube player.
 
+**It is highly recommended to read the documentation and run the example project on a real device to fully understand and inspect the full range
+ of capabilities.**
+
 [Media](#media) | [Description](#description) | [How-to-Use](#howtouse)
 
 <img src="https://img.shields.io/badge/Cosmos%20Software-Love%20Code-red"/>
@@ -10,6 +13,11 @@ in-app Youtube player.
 
 [![Pub](https://img.shields.io/pub/v/snap?color=g)](https://pub.dev/packages/snap)
 [![License](https://img.shields.io/github/license/aliyigitbireroglu/flutter-snap?color=blue)](https://github.com/aliyigitbireroglu/flutter-snap/blob/master/LICENSE)
+
+## Notice
+* **[flick](https://pub.dev/packages/flick) works as intended on actual devices even if it might appear to fail rarely on simulators. Don't be 
+discouraged!**
+* * *
 
 ## Recent
 * **[flick](https://pub.dev/packages/flick) is now added. It is amazing! See [Media](#media) for examples.** 
@@ -110,10 +118,6 @@ flexibility of 0.75 before it snaps. The snapTargets determine to where the view
 
 Keep in mind that these constant values are provided only for the ease of use. snapTargets can consist of any values you wish.
 
-* * *
-##It is highly recommended to read the documentation and the example project.
-
-<br>
 
 ## Notes
 I started using and learning Flutter only some weeks ago so this package might have some parts that don't make sense, 
