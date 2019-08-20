@@ -12,8 +12,6 @@
 
 * [1.0.0+1] A minor error in the README is fixed.
 
-* [1.0.0+2] Code excerpt added to the README.
-
 ## [0.1.3] - 08.08.2019
 
 * Improved code style.
