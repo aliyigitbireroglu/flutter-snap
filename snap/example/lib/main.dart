@@ -5,8 +5,8 @@
 // other asset files. If you were granted this Intellectual Property for personal use, you are obligated to include this copyright                   /
 // text at all times.                                                                                                                                /
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 //@formatter:off
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -68,251 +68,125 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             children: [
               Scaffold(
-                  body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    description(
-                        "The box will snap to the corners or the center."),
-                    gap(),
-                    Expanded(
-                        child: Align(
-                            key: bounds[0],
-                            alignment: const Alignment(-1.0, -1.0),
-                            child: SnapController(
-                                firstNormalBoxView(),
-                                true,
-                                views[0],
-                                bounds[0],
-                                Offset.zero,
-                                const Offset(1.0, 1.0),
-                                const Offset(0.75, 0.75),
-                                const Offset(0.75, 0.75),
-                                snapTargets: [
-                                  const SnapTarget(
-                                      Pivot.topLeft, Pivot.topLeft),
-                                  const SnapTarget(
-                                      Pivot.topRight, Pivot.topRight),
-                                  const SnapTarget(
-                                      Pivot.bottomLeft, Pivot.bottomLeft),
-                                  const SnapTarget(
-                                      Pivot.bottomRight, Pivot.bottomRight),
-                                  const SnapTarget(Pivot.center, Pivot.center)
-                                ])))
-                  ])),
-              Scaffold(
-                  body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    description(
-                        "The box will snap to the closest side regardless of animation."),
-                    gap(),
-                    Expanded(
-                        child: Align(
-                            key: bounds[1],
-                            alignment: const Alignment(-1.0, -1.0),
-                            child: Stack(children: [
-                              AnimatedPositioned(
-                                  left: 0,
-                                  bottom: bottom,
-                                  duration: Duration(milliseconds: 300),
-                                  child: SnapController(
-                                      animatedBoxView(),
-                                      true,
-                                      views[1],
-                                      bounds[1],
-                                      Offset.zero,
-                                      const Offset(1.0, 1.0),
-                                      const Offset(0.75, 0.75),
-                                      const Offset(0.75, 0.75),
-                                      snapTargets: [
-                                        const SnapTarget(
-                                            Pivot.closestAny, Pivot.closestAny)
-                                      ]))
+                  body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                description("The box will snap to the corners or the center."),
+                gap(),
+                Expanded(
+                    child: Align(
+                        key: bounds[0],
+                        alignment: const Alignment(-1.0, -1.0),
+                        child: SnapController(firstNormalBoxView(), true, views[0], bounds[0], Offset.zero, const Offset(1.0, 1.0),
+                            const Offset(0.75, 0.75), const Offset(0.75, 0.75),
+                            snapTargets: [
+                              const SnapTarget(Pivot.topLeft, Pivot.topLeft),
+                              const SnapTarget(Pivot.topRight, Pivot.topRight),
+                              const SnapTarget(Pivot.bottomLeft, Pivot.bottomLeft),
+                              const SnapTarget(Pivot.bottomRight, Pivot.bottomRight),
+                              const SnapTarget(Pivot.center, Pivot.center)
                             ])))
-                  ])),
+              ])),
               Scaffold(
-                  body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    description(
-                        "The box will snap to the closest matching color."),
-                    gap(),
-                    Expanded(
+                  body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                description("The box will snap to the closest side regardless of animation."),
+                gap(),
+                Expanded(
+                    child: Align(
+                        key: bounds[1],
+                        alignment: const Alignment(-1.0, -1.0),
                         child: Stack(children: [
-                      Align(
-                          key: bounds[2],
-                          alignment: const Alignment(-1.0, -1.0),
-                          child: SnapController(
-                              dottedBoxView(),
-                              true,
-                              views[2],
-                              bounds[2],
-                              Offset.zero,
-                              const Offset(1.0, 1.0),
-                              const Offset(0.75, 0.75),
-                              const Offset(0.75, 0.75),
-                              snapTargets: [
-                                const SnapTarget(const Offset(0.1, 0.1),
-                                    const Offset(0.1, 0.1)),
-                                const SnapTarget(const Offset(0.9, 0.1),
-                                    const Offset(0.85, 0.465)),
-                                const SnapTarget(const Offset(0.1, 0.9),
-                                    const Offset(0.1, 0.9)),
-                              ])),
-                      Align(
-                          alignment: const Alignment(-0.85, -0.85),
-                          child: Container(
-                              width: 10,
-                              height: 10,
-                              color: Colors.orangeAccent)),
-                      Align(
-                          alignment: const Alignment(0.75, -0.1),
-                          child: Container(
-                              width: 10, height: 10, color: Colors.black)),
-                      Align(
-                          alignment: const Alignment(-0.85, 0.85),
-                          child: Container(
-                              width: 10,
-                              height: 10,
-                              color: Colors.deepPurpleAccent))
-                    ]))
-                  ])),
+                          AnimatedPositioned(
+                              left: 0,
+                              bottom: bottom,
+                              duration: Duration(milliseconds: 300),
+                              child: SnapController(animatedBoxView(), true, views[1], bounds[1], Offset.zero, const Offset(1.0, 1.0),
+                                  const Offset(0.75, 0.75), const Offset(0.75, 0.75),
+                                  snapTargets: [const SnapTarget(Pivot.closestAny, Pivot.closestAny)]))
+                        ])))
+              ])),
               Scaffold(
-                  body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    description(
-                        "The box will snap to the corners or the center while maintaining the initial offset"),
-                    gap(),
-                    Expanded(
-                        child: Align(
-                            key: bounds[3],
-                            alignment: const Alignment(-1.0, -1.0),
-                            child: SnapController(
-                                translatedBoxView(),
-                                true,
-                                views[3],
-                                bounds[3],
-                                Offset(50.0 / MediaQuery.of(context).size.width,
-                                    50.0 / MediaQuery.of(context).size.height),
-                                Offset(1.0, 1.0) -
-                                    Offset(
-                                        50.0 /
-                                            MediaQuery.of(context).size.width,
-                                        50.0 /
-                                            MediaQuery.of(context).size.height),
-                                const Offset(0.75, 0.75),
-                                const Offset(0.75, 0.75),
-                                snapTargets: [
-                                  SnapTarget(
-                                      Pivot.topLeft,
-                                      Offset(
-                                          50.0 /
-                                              MediaQuery.of(context).size.width,
-                                          50.0 /
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .height)),
-                                  SnapTarget(
-                                      Pivot.topRight,
-                                      Offset(
-                                          1.0 -
-                                              50.0 /
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                          50.0 /
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .height)),
-                                  SnapTarget(
-                                      Pivot.bottomLeft,
-                                      Offset(
-                                          50.0 /
-                                              MediaQuery.of(context).size.width,
-                                          1.0 -
-                                              50.0 /
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .height)),
-                                  SnapTarget(
-                                      Pivot.bottomRight,
-                                      Offset(1.0, 1.0) -
-                                          Offset(
-                                              50.0 /
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                              50.0 /
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .height)),
-                                  const SnapTarget(Pivot.center, Pivot.center)
-                                ])))
-                  ])),
+                  body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                description("The box will snap to the closest matching color."),
+                gap(),
+                Expanded(
+                    child: Stack(children: [
+                  Align(
+                      key: bounds[2],
+                      alignment: const Alignment(-1.0, -1.0),
+                      child: SnapController(dottedBoxView(), true, views[2], bounds[2], Offset.zero, const Offset(1.0, 1.0), const Offset(0.75, 0.75),
+                          const Offset(0.75, 0.75),
+                          snapTargets: [
+                            const SnapTarget(const Offset(0.1, 0.1), const Offset(0.1, 0.1)),
+                            const SnapTarget(const Offset(0.9, 0.1), const Offset(0.85, 0.465)),
+                            const SnapTarget(const Offset(0.1, 0.9), const Offset(0.1, 0.9)),
+                          ])),
+                  Align(alignment: const Alignment(-0.85, -0.85), child: Container(width: 10, height: 10, color: Colors.orangeAccent)),
+                  Align(alignment: const Alignment(0.75, -0.1), child: Container(width: 10, height: 10, color: Colors.black)),
+                  Align(alignment: const Alignment(-0.85, 0.85), child: Container(width: 10, height: 10, color: Colors.deepPurpleAccent))
+                ]))
+              ])),
               Scaffold(
-                  body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        description(
-                            "The box will snap to the closest side or the center within its container."),
-                        gap(),
-                        Container(
-                            width: 300,
-                            height: 300,
-                            color: Colors.orangeAccent,
-                            child: Align(
-                              key: bounds[4],
-                              alignment: const Alignment(-1.0, -1.0),
-                              child: SnapController(
-                                  smallBoxView(),
-                                  true,
-                                  views[4],
-                                  bounds[4],
-                                  Offset.zero,
-                                  const Offset(1.0, 1.0),
-                                  const Offset(0.15, 0.15),
-                                  const Offset(0.15, 0.15),
-                                  snapTargets: [
-                                    const SnapTarget(
-                                        Pivot.closestAny, Pivot.closestAny),
-                                    const SnapTarget(Pivot.center, Pivot.center)
-                                  ]),
-                            ))
-                      ])),
+                  body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                description("The box will snap to the corners or the center while maintaining the initial offset"),
+                gap(),
+                Expanded(
+                    child: Align(
+                        key: bounds[3],
+                        alignment: const Alignment(-1.0, -1.0),
+                        child: SnapController(
+                            translatedBoxView(),
+                            true,
+                            views[3],
+                            bounds[3],
+                            Offset(50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height),
+                            Offset(1.0, 1.0) - Offset(50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height),
+                            const Offset(0.75, 0.75),
+                            const Offset(0.75, 0.75),
+                            snapTargets: [
+                              SnapTarget(Pivot.topLeft, Offset(50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height)),
+                              SnapTarget(
+                                  Pivot.topRight, Offset(1.0 - 50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height)),
+                              SnapTarget(Pivot.bottomLeft,
+                                  Offset(50.0 / MediaQuery.of(context).size.width, 1.0 - 50.0 / MediaQuery.of(context).size.height)),
+                              SnapTarget(Pivot.bottomRight,
+                                  Offset(1.0, 1.0) - Offset(50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height)),
+                              const SnapTarget(Pivot.center, Pivot.center)
+                            ])))
+              ])),
               Scaffold(
-                  body: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    description(
-                        "The box will snap to the corners or the center without animation."),
-                    gap(),
-                    Expanded(
-                        child: Align(
-                            key: bounds[5],
-                            alignment: const Alignment(-1.0, -1.0),
-                            child: SnapController(
-                                secondNormalBoxView(),
-                                false,
-                                views[5],
-                                bounds[5],
-                                Offset.zero,
-                                const Offset(1.0, 1.0),
-                                const Offset(0.75, 0.75),
-                                const Offset(0.75, 0.75),
-                                snapTargets: [
-                                  const SnapTarget(
-                                      Pivot.topLeft, Pivot.topLeft),
-                                  const SnapTarget(
-                                      Pivot.topRight, Pivot.topRight),
-                                  const SnapTarget(
-                                      Pivot.bottomLeft, Pivot.bottomLeft),
-                                  const SnapTarget(
-                                      Pivot.bottomRight, Pivot.bottomRight),
-                                  const SnapTarget(Pivot.center, Pivot.center)
-                                ],
-                                animateSnap: false)))
-                  ])),
+                  body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                description("The box will snap to the closest side or the center within its container."),
+                gap(),
+                Container(
+                    width: 300,
+                    height: 300,
+                    color: Colors.orangeAccent,
+                    child: Align(
+                      key: bounds[4],
+                      alignment: const Alignment(-1.0, -1.0),
+                      child: SnapController(smallBoxView(), true, views[4], bounds[4], Offset.zero, const Offset(1.0, 1.0), const Offset(0.15, 0.15),
+                          const Offset(0.15, 0.15),
+                          snapTargets: [const SnapTarget(Pivot.closestAny, Pivot.closestAny), const SnapTarget(Pivot.center, Pivot.center)]),
+                    ))
+              ])),
+              Scaffold(
+                  body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                description("The box will snap to the corners or the center without animation."),
+                gap(),
+                Expanded(
+                    child: Align(
+                        key: bounds[5],
+                        alignment: const Alignment(-1.0, -1.0),
+                        child: SnapController(secondNormalBoxView(), false, views[5], bounds[5], Offset.zero, const Offset(1.0, 1.0),
+                            const Offset(0.75, 0.75), const Offset(0.75, 0.75),
+                            snapTargets: [
+                              const SnapTarget(Pivot.topLeft, Pivot.topLeft),
+                              const SnapTarget(Pivot.topRight, Pivot.topRight),
+                              const SnapTarget(Pivot.bottomLeft, Pivot.bottomLeft),
+                              const SnapTarget(Pivot.bottomRight, Pivot.bottomRight),
+                              const SnapTarget(Pivot.center, Pivot.center)
+                            ],
+                            animateSnap: false)))
+              ])),
             ]));
   }
 }
@@ -324,12 +198,8 @@ Widget description(String text) {
       child: Center(
           child: Padding(
               padding: const EdgeInsets.all(10),
-              child: Text(text,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15),
-                  textAlign: TextAlign.center))));
+              child:
+                  Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.center))));
 }
 
 Widget gap() {
@@ -337,13 +207,8 @@ Widget gap() {
       constraints: const BoxConstraints.expand(height: 25),
       color: Colors.transparent,
       child: Center(
-          child: const Text(
-              "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ",
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10),
-              textAlign: TextAlign.center)));
+          child: const Text("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ",
+              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10), textAlign: TextAlign.center)));
 }
 
 Widget firstNormalBoxView() {
@@ -384,16 +249,8 @@ Widget normalBox(Key key, String text, Color color) {
           padding: const EdgeInsets.all(5),
           child: Container(
               constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                  color: color,
-                  borderRadius:
-                      const BorderRadius.all(const Radius.circular(10.0))),
-              child: Center(
-                  child: Text(text,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25))))));
+              decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.all(const Radius.circular(10.0))),
+              child: Center(child: Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25))))));
 }
 
 Widget translatedBox(Key key, String text, Color color) {
@@ -408,16 +265,8 @@ Widget translatedBox(Key key, String text, Color color) {
               padding: const EdgeInsets.all(5),
               child: Container(
                   constraints: BoxConstraints.expand(),
-                  decoration: BoxDecoration(
-                      color: color,
-                      borderRadius:
-                          const BorderRadius.all(const Radius.circular(10.0))),
-                  child: Center(
-                      child: Text(text,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25)))))));
+                  decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.all(const Radius.circular(10.0))),
+                  child: Center(child: Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25)))))));
 }
 
 Widget smallBox(Key key, String text, Color color) {
@@ -430,16 +279,8 @@ Widget smallBox(Key key, String text, Color color) {
           padding: const EdgeInsets.all(5),
           child: Container(
               constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                  color: color,
-                  borderRadius:
-                      const BorderRadius.all(const Radius.circular(0.0))),
-              child: Center(
-                  child: Text(text,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25))))));
+              decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.all(const Radius.circular(0.0))),
+              child: Center(child: Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25))))));
 }
 
 Widget dottedBox(Key key, String text, Color color) {
@@ -455,26 +296,10 @@ Widget dottedBox(Key key, String text, Color color) {
                 padding: const EdgeInsets.all(5),
                 child: Container(
                     constraints: BoxConstraints.expand(),
-                    decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: const BorderRadius.all(
-                            const Radius.circular(10.0))),
-                    child: Center(
-                        child: Text(text,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25))))),
-            Align(
-                alignment: const Alignment(-0.9, -0.9),
-                child: Container(
-                    width: 10, height: 10, color: Colors.orangeAccent)),
-            Align(
-                alignment: const Alignment(0.9, -0.9),
-                child: Container(width: 10, height: 10, color: Colors.black)),
-            Align(
-                alignment: const Alignment(-0.9, 0.9),
-                child: Container(
-                    width: 10, height: 10, color: Colors.deepPurpleAccent))
+                    decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.all(const Radius.circular(10.0))),
+                    child: Center(child: Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25))))),
+            Align(alignment: const Alignment(-0.9, -0.9), child: Container(width: 10, height: 10, color: Colors.orangeAccent)),
+            Align(alignment: const Alignment(0.9, -0.9), child: Container(width: 10, height: 10, color: Colors.black)),
+            Align(alignment: const Alignment(-0.9, 0.9), child: Container(width: 10, height: 10, color: Colors.deepPurpleAccent))
           ])));
 }

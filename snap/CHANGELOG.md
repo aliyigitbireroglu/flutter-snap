@@ -1,3 +1,9 @@
+## [1.0.1] - 19.08.2019
+
+* Improved code style.
+
+* Code excerpt added to the README.
+
 ## [1.0.0] - 18.08.2019
 
 * [flick](https://pub.dev/packages/flick) is now implemented directly to the package.
@@ -5,6 +11,8 @@
 * Fine tuning.
 
 * [1.0.0+1] A minor error in the README is fixed.
+
+* [1.0.0+2] Code excerpt added to the README.
 
 ## [0.1.3] - 08.08.2019
 
