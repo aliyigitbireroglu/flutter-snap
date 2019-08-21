@@ -1,6 +1,6 @@
 name: snap
 description: An extensive snap tool/widget for Flutter that allows very flexible snap management and snapping between your widgets.
-version: 1.0.1
+version: 1.0.1+1
 author: Ali Yigit Bireroglu <aliyigitbireroglu@gmail.com>
 repository: https://github.com/aliyigitbireroglu/flutter-snap
 homepage: https://www.cosmossoftware.coffee
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flick: ^0.1.0
+  flick: ^0.1.1
 
 dev_dependencies:
   flutter_test:

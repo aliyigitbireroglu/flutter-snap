@@ -14,8 +14,8 @@ import 'package:flutter/widgets.dart';
 import 'Export.dart';
 
 typedef MoveCallback = void Function(Offset offset);
-typedef SnapCallback = void Function(Offset offset);
 typedef DragCallback = void Function(dynamic dragDetails);
+typedef SnapCallback = void Function(Offset offset);
 
 class Pivot {
   ///Use this value if you want your view to snap to the closest horizontal side (Left/Right).
