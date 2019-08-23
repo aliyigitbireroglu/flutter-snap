@@ -4,6 +4,8 @@
 
 * Improved code style with trailing commas.
 
+* [1.0.2+1] Minor changes.
+
 ## [1.0.1] - 20.08.2019
 
 * Improved code style.
