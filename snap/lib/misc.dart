@@ -60,5 +60,8 @@ class SnapTarget {
   final Offset viewPivot;
   final Offset boundPivot;
 
-  const SnapTarget(this.viewPivot, this.boundPivot);
+  const SnapTarget(
+    this.viewPivot,
+    this.boundPivot,
+  );
 }
