@@ -9,7 +9,6 @@
 
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flick/flick.dart';
@@ -141,6 +140,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
   final bool animateSnap;
   bool useFlick;
   final double flickSensitivity;
+  final GlobalKey<FlickControllerState> flickController = GlobalKey<FlickControllerState>();
 
   final Misc.MoveCallback onMove;
   final Misc.DragCallback onDragStart;
@@ -209,21 +209,29 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
         if (onMove != null) onMove(deltaNotifier.value);
       })
       ..addStatusListener((_) {});
-    animation = Tween(begin: Offset.zero, end: Offset.zero).animate(CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn));
+    animation = Tween(
+      begin: Offset.zero,
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
 
     checkViewAndBound();
   }
 
   @override
   void dispose() {
+    reset();
+
     animationController.removeListener(() {
       deltaNotifier.value = animation.value;
       if (onMove != null) onMove(deltaNotifier.value);
     });
     animationController.removeStatusListener((_) {});
     animationController.dispose();
-
-    reset();
 
     super.dispose();
   }
@@ -487,7 +495,15 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
   }
 
   Future move(Offset snapTarget) async {
-    animation = Tween(begin: deltaNotifier.value, end: snapTarget).animate(CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn));
+    animation = Tween(
+      begin: deltaNotifier.value,
+      end: snapTarget,
+    ).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
     animationController.forward(from: 0);
     await Future.delayed(const Duration(milliseconds: 333));
     return;
@@ -506,6 +522,18 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
     deltaNotifier.value = Offset.zero;
   }
 
+  void softReset(Offset _constraintsMin, Offset _constraintsMax) {
+    constraintsMin = _constraintsMin;
+    constraintsMax = _constraintsMax;
+    viewHeight = -1;
+    viewWidth = -1;
+    viewOrigin = null;
+    boundHeight = -1;
+    boundWidth = -1;
+    boundOrigin = null;
+    if (useFlick && flickController.currentState != null) flickController.currentState.softReset(_constraintsMin, _constraintsMax);
+  }
+
   Widget wrapper() {
     if (useFlick)
       return FlickController(
@@ -517,11 +545,12 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
         constraintsMax: constraintsMax,
         flexibilityMin: flexibilityMin,
         flexibilityMax: flexibilityMax,
-        sensitivity: 0.075,
+        sensitivity: flickSensitivity,
         onDragStart: beginDrag,
         onDragUpdate: updateDrag,
         onDragEnd: endDrag,
         onFlick: onFlick,
+        key: flickController,
       );
     else
       return GestureDetector(

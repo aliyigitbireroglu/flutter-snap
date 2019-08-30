@@ -7,10 +7,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //@formatter:off
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import 'package:snap/snap.dart';
 
 List<GlobalKey> bounds = List<GlobalKey>();
@@ -44,10 +42,260 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     for (int i = 0; i < 6; i++) {
       bounds.add(GlobalKey());
       views.add(GlobalKey());
     }
+  }
+
+  Widget description(String text) {
+    return Container(
+      constraints: const BoxConstraints.expand(height: 75),
+      color: Colors.green,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget gap() {
+    return Container(
+      constraints: const BoxConstraints.expand(height: 25),
+      color: Colors.transparent,
+      child: Center(
+        child: const Text(
+          "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ",
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 10,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget normalBox(Key key, String text, Color color) {
+    return Container(
+      key: key,
+      width: 200,
+      height: 200,
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: Container(
+          constraints: BoxConstraints.expand(),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget translatedBox(Key key, String text, Color color) {
+    return Transform.translate(
+      offset: const Offset(50, 50),
+      child: Container(
+        key: key,
+        width: 200,
+        height: 200,
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Container(
+            constraints: BoxConstraints.expand(),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
+            ),
+            child: Center(
+              child: Text(
+                text,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget smallBox(Key key, String text, Color color) {
+    return Container(
+      key: key,
+      width: 50,
+      height: 50,
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: Container(
+          constraints: BoxConstraints.expand(),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: const BorderRadius.all(const Radius.circular(0.0)),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget dottedBox(Key key, String text, Color color) {
+    return Transform.translate(
+      offset: const Offset(75, 100),
+      child: Container(
+        key: key,
+        width: 200,
+        height: 200,
+        color: Colors.transparent,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Container(
+                constraints: BoxConstraints.expand(),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
+                ),
+                child: Center(
+                  child: Text(
+                    text,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: const Alignment(-0.9, -0.9),
+              child: Container(
+                width: 10,
+                height: 10,
+                color: Colors.orangeAccent,
+              ),
+            ),
+            Align(
+              alignment: const Alignment(0.9, -0.9),
+              child: Container(
+                width: 10,
+                height: 10,
+                color: Colors.black,
+              ),
+            ),
+            Align(
+              alignment: const Alignment(-0.9, 0.9),
+              child: Container(
+                width: 10,
+                height: 10,
+                color: Colors.deepPurpleAccent,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget firstNormalBoxView() {
+    return normalBox(
+      views[0],
+      "Move & Snap",
+      Colors.redAccent,
+    );
+  }
+
+  Widget animatedBoxView() {
+    return normalBox(
+      views[1],
+      "Move & Snap",
+      Colors.redAccent,
+    );
+  }
+
+  Widget dottedBoxView() {
+    return dottedBox(
+      views[2],
+      "Move & Snap",
+      Colors.redAccent,
+    );
+  }
+
+  Widget translatedBoxView() {
+    return translatedBox(
+      views[3],
+      "Move & Snap",
+      Colors.redAccent,
+    );
+  }
+
+  Widget smallBoxView() {
+    return smallBox(
+      views[4],
+      "*",
+      Colors.redAccent,
+    );
+  }
+
+  Widget secondNormalBoxView() {
+    return normalBox(
+      views[5],
+      "Move & Snap",
+      Colors.redAccent,
+    );
+  }
+
+  Widget thirdNormalBoxView() {
+    return normalBox(
+      views[6],
+      "Move & Snap",
+      Colors.redAccent,
+    );
   }
 
   @override
@@ -229,7 +477,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Scaffold(
             body: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 description("The box will snap to the closest side or the center within its container."),
                 gap(),
@@ -296,249 +543,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
-
-Widget description(String text) {
-  return Container(
-    constraints: const BoxConstraints.expand(height: 75),
-    color: Colors.green,
-    child: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    ),
-  );
-}
-
-Widget gap() {
-  return Container(
-    constraints: const BoxConstraints.expand(height: 25),
-    color: Colors.transparent,
-    child: Center(
-      child: const Text(
-        "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ",
-        style: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ),
-  );
-}
-
-Widget firstNormalBoxView() {
-  return normalBox(
-    views[0],
-    "Move & Snap",
-    Colors.redAccent,
-  );
-}
-
-Widget animatedBoxView() {
-  return normalBox(
-    views[1],
-    "Move & Snap",
-    Colors.redAccent,
-  );
-}
-
-Widget dottedBoxView() {
-  return dottedBox(
-    views[2],
-    "Move & Snap",
-    Colors.redAccent,
-  );
-}
-
-Widget translatedBoxView() {
-  return translatedBox(
-    views[3],
-    "Move & Snap",
-    Colors.redAccent,
-  );
-}
-
-Widget smallBoxView() {
-  return smallBox(
-    views[4],
-    "*",
-    Colors.redAccent,
-  );
-}
-
-Widget secondNormalBoxView() {
-  return normalBox(
-    views[5],
-    "Move & Snap",
-    Colors.redAccent,
-  );
-}
-
-Widget thirdNormalBoxView() {
-  return normalBox(
-    views[6],
-    "Move & Snap",
-    Colors.redAccent,
-  );
-}
-
-Widget normalBox(Key key, String text, Color color) {
-  return Container(
-    key: key,
-    width: 200,
-    height: 200,
-    color: Colors.transparent,
-    child: Padding(
-      padding: const EdgeInsets.all(5),
-      child: Container(
-        constraints: BoxConstraints.expand(),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-Widget translatedBox(Key key, String text, Color color) {
-  return Transform.translate(
-    offset: const Offset(50, 50),
-    child: Container(
-      key: key,
-      width: 200,
-      height: 200,
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Container(
-          constraints: BoxConstraints.expand(),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-Widget smallBox(Key key, String text, Color color) {
-  return Container(
-    key: key,
-    width: 50,
-    height: 50,
-    color: Colors.transparent,
-    child: Padding(
-      padding: const EdgeInsets.all(5),
-      child: Container(
-        constraints: BoxConstraints.expand(),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: const BorderRadius.all(const Radius.circular(0.0)),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-Widget dottedBox(Key key, String text, Color color) {
-  return Transform.translate(
-    offset: const Offset(75, 100),
-    child: Container(
-      key: key,
-      width: 200,
-      height: 200,
-      color: Colors.transparent,
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: Container(
-              constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
-              ),
-              child: Center(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: const Alignment(-0.9, -0.9),
-            child: Container(
-              width: 10,
-              height: 10,
-              color: Colors.orangeAccent,
-            ),
-          ),
-          Align(
-            alignment: const Alignment(0.9, -0.9),
-            child: Container(
-              width: 10,
-              height: 10,
-              color: Colors.black,
-            ),
-          ),
-          Align(
-            alignment: const Alignment(-0.9, 0.9),
-            child: Container(
-              width: 10,
-              height: 10,
-              color: Colors.deepPurpleAccent,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }
