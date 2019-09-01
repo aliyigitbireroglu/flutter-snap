@@ -48,7 +48,7 @@ Watch on **Youtube**:
 <br><br>
 [v0.1.0](https://youtu.be/anHHG3JJPrI)
 <br><br>
-<img src="https://www.cosmossoftware.coffee/Common/Portfolio/GIFs/FlutterSnapNew.gif" height="450" max-height="450"/>
+<img src="https://www.cosmossoftware.coffee/Common/Portfolio/GIFs/FlutterSnapNew.gif" max-height="450"/>
 <br><br>
 
 

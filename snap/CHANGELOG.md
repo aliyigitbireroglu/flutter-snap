@@ -6,6 +6,8 @@
 
 * [1.0.3+1] Updated README.
 
+* [1.0.3+2] Updated README.
+
 ## [1.0.2] - 23.08.2019
 
 * Minor changes.
