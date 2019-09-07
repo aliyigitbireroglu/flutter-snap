@@ -122,7 +122,7 @@ class SnapController extends StatefulWidget {
   }
 }
 
-class SnapControllerState extends State<SnapController> with SingleTickerProviderStateMixin {
+class SnapControllerState extends State<SnapController> with TickerProviderStateMixin {
   Widget uiChild;
   final bool useCache;
   final GlobalKey viewKey;
@@ -190,6 +190,11 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
     this.onSnap,
   );
 
+  void animationListener() {
+    deltaNotifier.value = animation.value;
+    if (onMove != null) onMove(deltaNotifier.value);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -203,12 +208,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
       duration: const Duration(milliseconds: 333),
       lowerBound: 0,
       upperBound: 1,
-    )
-      ..addListener(() {
-        deltaNotifier.value = animation.value;
-        if (onMove != null) onMove(deltaNotifier.value);
-      })
-      ..addStatusListener((_) {});
+    )..addListener(animationListener);
     animation = Tween(
       begin: Offset.zero,
       end: Offset.zero,
@@ -226,11 +226,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
   void dispose() {
     reset();
 
-    animationController.removeListener(() {
-      deltaNotifier.value = animation.value;
-      if (onMove != null) onMove(deltaNotifier.value);
-    });
-    animationController.removeStatusListener((_) {});
+    animationController.removeListener(animationListener);
     animationController.dispose();
 
     super.dispose();
@@ -504,6 +500,7 @@ class SnapControllerState extends State<SnapController> with SingleTickerProvide
         curve: Curves.fastOutSlowIn,
       ),
     );
+    if (animationController.isAnimating) animationController.stop();
     animationController.forward(from: 0);
     await Future.delayed(const Duration(milliseconds: 333));
     return;
