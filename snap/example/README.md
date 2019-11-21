@@ -95,6 +95,7 @@ SnapController(
     const SnapTarget(Pivot.bottomRight, Pivot.bottomRight),
     const SnapTarget(Pivot.center, Pivot.center)
   ],
+  minSnapDistance   : 100.0,
   animateSnap       : true,
   useFlick          : true,
   flickSensitivity  : 0.075,
@@ -124,7 +125,7 @@ void _onSnap(Offset offset);
 
 *For a complete set of descriptions for all parameters and methods, see the [documentation](https://pub.dev/documentation/snap/latest/).*
 
-* Set [useCache] to true if your [uiChild] doesn't change during the Peek & Pop process.
+* Set [useCache] to true if your [uiChild] doesn't change at runtime.
 * Consider the following example:
 
 ```

@@ -340,6 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         const SnapTarget(Pivot.bottomRight, Pivot.bottomRight),
                         const SnapTarget(Pivot.center, Pivot.center),
                       ],
+                      minSnapDistance: 100,
                     ),
                   ),
                 ),
@@ -463,10 +464,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       snapTargets: [
                         SnapTarget(Pivot.topLeft, Offset(50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height)),
                         SnapTarget(Pivot.topRight, Offset(1.0 - 50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height)),
-                        SnapTarget(
-                            Pivot.bottomLeft, Offset(50.0 / MediaQuery.of(context).size.width, 1.0 - 50.0 / MediaQuery.of(context).size.height)),
-                        SnapTarget(Pivot.bottomRight,
-                            Offset(1.0, 1.0) - Offset(50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height)),
+                        SnapTarget(Pivot.bottomLeft, Offset(50.0 / MediaQuery.of(context).size.width, 1.0 - 50.0 / MediaQuery.of(context).size.height)),
+                        SnapTarget(Pivot.bottomRight, Offset(1.0, 1.0) - Offset(50.0 / MediaQuery.of(context).size.width, 50.0 / MediaQuery.of(context).size.height)),
                         const SnapTarget(Pivot.center, Pivot.center),
                       ],
                     ),

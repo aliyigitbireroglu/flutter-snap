@@ -52,6 +52,9 @@ class SnapController extends StatefulWidget {
   ///The list of [SnapTarget]s your view can snap to.
   final List<SnapTarget> snapTargets;
 
+  ///Use this value to set the minimum distance in pixels required for the snapping to occur. If no [SnapTarget] is found that is closer to the [uiChild] than this value, the snapping will not occur.
+  final double minSnapDistance;
+
   ///Use this value to set whether the snapping should occur directly or via an animation.
   final bool animateSnap;
 
@@ -89,6 +92,7 @@ class SnapController extends StatefulWidget {
     this.customBoundWidth: 0,
     this.customBoundHeight: 0,
     this.snapTargets,
+    this.minSnapDistance = 0,
     this.animateSnap: true,
     this.useFlick: true,
     this.flickSensitivity: 0.075,
@@ -110,6 +114,7 @@ class SnapController extends StatefulWidget {
       flexibilityMin,
       flexibilityMax,
       snapTargets,
+      minSnapDistance,
       animateSnap,
       useFlick,
       flickSensitivity,
@@ -137,6 +142,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
   final List<SnapTarget> snapTargets;
 
   bool canMove = true;
+  final double minSnapDistance;
   final bool animateSnap;
   bool useFlick;
   final double flickSensitivity;
@@ -180,6 +186,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
     this.flexibilityMin,
     this.flexibilityMax,
     this.snapTargets,
+    this.minSnapDistance,
     this.animateSnap,
     this.useFlick,
     this.flickSensitivity,
@@ -281,8 +288,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
   bool get boundIsSet => !(boundWidth == -1 || boundHeight == -1 || boundOrigin == null);
 
   void checkViewOrigin() {
-    if (viewOrigin != viewRenderBox.localToGlobal(Offset.zero) - deltaNotifier.value)
-      viewOrigin = viewRenderBox.localToGlobal(Offset.zero) - deltaNotifier.value;
+    if (viewOrigin != viewRenderBox.localToGlobal(Offset.zero) - deltaNotifier.value) viewOrigin = viewRenderBox.localToGlobal(Offset.zero) - deltaNotifier.value;
   }
 
   void checkBoundOrigin() {
@@ -333,7 +339,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
 
     if (_debugLevel > 0) print("EndDrag");
 
-    if (onDragEnd != null) onDragStart(dragEndDetails);
+    if (onDragEnd != null) onDragEnd(dragEndDetails);
 
     if (!useFlick) snap();
   }
@@ -349,14 +355,10 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
     Offset _delta = delta + Offset(updateDragPosition.dx - beginDragPosition.dx, updateDragPosition.dy - beginDragPosition.dy);
     normalisedConstraintsMin = constraintsMin - viewOrigin + boundOrigin;
     normalisedConstraintsMax = constraintsMax - viewOrigin + boundOrigin - Offset(viewWidth, viewHeight);
-    if (_delta.dx < normalisedConstraintsMin.dx)
-      _delta = Offset(normalisedConstraintsMin.dx - pow((_delta.dx - normalisedConstraintsMin.dx).abs(), flexibilityMin.dx) + 1.0, _delta.dy);
-    if (_delta.dx > normalisedConstraintsMax.dx)
-      _delta = Offset(normalisedConstraintsMax.dx + pow((_delta.dx - normalisedConstraintsMax.dx).abs(), flexibilityMax.dx) - 1.0, _delta.dy);
-    if (_delta.dy < normalisedConstraintsMin.dy)
-      _delta = Offset(_delta.dx, normalisedConstraintsMin.dy - pow((_delta.dy - normalisedConstraintsMin.dy).abs(), flexibilityMin.dy) + 1.0);
-    if (_delta.dy > normalisedConstraintsMax.dy)
-      _delta = Offset(_delta.dx, normalisedConstraintsMax.dy + pow((_delta.dy - normalisedConstraintsMax.dy).abs(), flexibilityMax.dy) - 1.0);
+    if (_delta.dx < normalisedConstraintsMin.dx) _delta = Offset(normalisedConstraintsMin.dx - pow((_delta.dx - normalisedConstraintsMin.dx).abs(), flexibilityMin.dx) + 1.0, _delta.dy);
+    if (_delta.dx > normalisedConstraintsMax.dx) _delta = Offset(normalisedConstraintsMax.dx + pow((_delta.dx - normalisedConstraintsMax.dx).abs(), flexibilityMax.dx) - 1.0, _delta.dy);
+    if (_delta.dy < normalisedConstraintsMin.dy) _delta = Offset(_delta.dx, normalisedConstraintsMin.dy - pow((_delta.dy - normalisedConstraintsMin.dy).abs(), flexibilityMin.dy) + 1.0);
+    if (_delta.dy > normalisedConstraintsMax.dy) _delta = Offset(_delta.dx, normalisedConstraintsMax.dy + pow((_delta.dy - normalisedConstraintsMax.dy).abs(), flexibilityMax.dy) - 1.0);
 
     deltaNotifier.value = _delta;
 
@@ -462,11 +464,8 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
             print("--------------------");
           }
         }
-        if (!Pivot.isClosestHorizontal(snapTarget.viewPivot) &&
-            !Pivot.isClosestVertical(snapTarget.viewPivot) &&
-            !Pivot.isClosestAny(snapTarget.viewPivot)) {
-          Offset offset = Offset(boundWidth * snapTarget.boundPivot.dx + boundOrigin.dx - viewWidth * snapTarget.viewPivot.dx - viewOrigin.dx,
-              boundHeight * snapTarget.boundPivot.dy + boundOrigin.dy - viewHeight * snapTarget.viewPivot.dy - viewOrigin.dy);
+        if (!Pivot.isClosestHorizontal(snapTarget.viewPivot) && !Pivot.isClosestVertical(snapTarget.viewPivot) && !Pivot.isClosestAny(snapTarget.viewPivot)) {
+          Offset offset = Offset(boundWidth * snapTarget.boundPivot.dx + boundOrigin.dx - viewWidth * snapTarget.viewPivot.dx - viewOrigin.dx, boundHeight * snapTarget.boundPivot.dy + boundOrigin.dy - viewHeight * snapTarget.viewPivot.dy - viewOrigin.dy);
           if (_debugLevel > 1) {
             print("--------------------");
             print(snapTarget.boundPivot);
@@ -484,6 +483,10 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
         }
       });
 
+      print(map.values.reduce(min));
+      if (map.values.reduce(min) > minSnapDistance) {
+        return deltaNotifier.value;
+      }
       return map.keys.firstWhere((Offset offset) {
         return map[offset] == map.values.reduce(min);
       });

@@ -1,3 +1,9 @@
+## [1.0.5] - 21.11.2019
+
+* [minSnapDistance] is added. If set, the snapping will not occur when no [SnapTarget] is found that is closer to the [uiChild] than this value.
+
+* Updated README.
+
 ## [1.0.4] - 07.09.2019
 
 * Minor changes.
