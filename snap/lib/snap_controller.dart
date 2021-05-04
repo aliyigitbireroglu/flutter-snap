@@ -50,7 +50,7 @@ class SnapController extends StatefulWidget {
   final double customBoundHeight;
 
   ///The list of [SnapTarget]s your view can snap to.
-  final List<SnapTarget> snapTargets;
+  final List<SnapTarget>? snapTargets;
 
   ///Use this value to set the minimum distance in pixels required for the snapping to occur. If no [SnapTarget] is found that is closer to the [uiChild] than this value, the snapping will not occur.
   final double minSnapDistance;
@@ -65,19 +65,19 @@ class SnapController extends StatefulWidget {
   final double flickSensitivity;
 
   ///The callback for when the view moves.
-  final Misc.MoveCallback onMove;
+  final Misc.MoveCallback? onMove;
 
   ///The callback for when the drag starts.
-  final Misc.DragCallback onDragStart;
+  final Misc.DragCallback? onDragStart;
 
   ///The callback for when the drag updates.
-  final Misc.DragCallback onDragUpdate;
+  final Misc.DragCallback? onDragUpdate;
 
   ///The callback for when the drag ends.
-  final Misc.DragCallback onDragEnd;
+  final Misc.DragCallback? onDragEnd;
 
   ///The callback for when the view snaps.
-  final SnapCallback onSnap;
+  final SnapCallback? onSnap;
 
   const SnapController(
     this.uiChild,
@@ -88,7 +88,7 @@ class SnapController extends StatefulWidget {
     this.constraintsMax,
     this.flexibilityMin,
     this.flexibilityMax, {
-    Key key,
+    Key? key,
     this.customBoundWidth: 0,
     this.customBoundHeight: 0,
     this.snapTargets,
@@ -128,18 +128,18 @@ class SnapController extends StatefulWidget {
 }
 
 class SnapControllerState extends State<SnapController> with TickerProviderStateMixin {
-  Widget uiChild;
+  Widget? uiChild;
   final bool useCache;
   final GlobalKey viewKey;
   final GlobalKey boundKey;
 
   Offset constraintsMin;
   Offset constraintsMax;
-  Offset normalisedConstraintsMin;
-  Offset normalisedConstraintsMax;
+  late Offset normalisedConstraintsMin;
+  late Offset normalisedConstraintsMax;
   final Offset flexibilityMin;
   final Offset flexibilityMax;
-  final List<SnapTarget> snapTargets;
+  final List<SnapTarget>? snapTargets;
 
   bool canMove = true;
   final double minSnapDistance;
@@ -148,29 +148,29 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
   final double flickSensitivity;
   final GlobalKey<FlickControllerState> flickController = GlobalKey<FlickControllerState>();
 
-  final Misc.MoveCallback onMove;
-  final Misc.DragCallback onDragStart;
-  final Misc.DragCallback onDragUpdate;
-  final Misc.DragCallback onDragEnd;
-  final SnapCallback onSnap;
+  final Misc.MoveCallback? onMove;
+  final Misc.DragCallback? onDragStart;
+  final Misc.DragCallback? onDragUpdate;
+  final Misc.DragCallback? onDragEnd;
+  final SnapCallback? onSnap;
 
-  RenderBox viewRenderBox;
+  RenderBox? viewRenderBox;
   double viewWidth = -1;
   double viewHeight = -1;
-  Offset viewOrigin;
-  RenderBox boundRenderBox;
+  Offset? viewOrigin;
+  RenderBox? boundRenderBox;
   double boundWidth = -1;
   double boundHeight = -1;
-  Offset boundOrigin;
+  Offset? boundOrigin;
 
-  Offset beginDragPosition;
-  Offset updateDragPosition;
+  Offset? beginDragPosition;
+  Offset? updateDragPosition;
   Offset delta = Offset.zero;
   Offset overrideDelta = Offset.zero;
 
   ///The [AnimationController] used to move the view during snapping if [SnapController.animateSnap] is set to true.
-  AnimationController animationController;
-  Animation<Offset> animation;
+  late AnimationController animationController;
+  late Animation<Offset> animation;
 
   final ValueNotifier<Offset> deltaNotifier = ValueNotifier<Offset>(Offset.zero);
 
@@ -199,7 +199,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
 
   void animationListener() {
     deltaNotifier.value = animation.value;
-    if (onMove != null) onMove(deltaNotifier.value);
+    if (onMove != null) onMove!(deltaNotifier.value);
   }
 
   @override
@@ -253,15 +253,15 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
   void setView() {
     try {
       if (viewKey.currentContext == null) return;
-      if (viewRenderBox == null) viewRenderBox = viewKey.currentContext.findRenderObject();
+      if (viewRenderBox == null) viewRenderBox = viewKey.currentContext!.findRenderObject() as RenderBox?;
 
       if (viewRenderBox != null) {
-        if (viewRenderBox.hasSize) {
-          if (viewWidth == -1) viewWidth = viewRenderBox.size.width;
-          if (viewHeight == -1) viewHeight = viewRenderBox.size.height;
+        if (viewRenderBox!.hasSize) {
+          if (viewWidth == -1) viewWidth = viewRenderBox!.size.width;
+          if (viewHeight == -1) viewHeight = viewRenderBox!.size.height;
         }
 
-        if (viewOrigin == null) viewOrigin = viewRenderBox.localToGlobal(Offset.zero);
+        if (viewOrigin == null) viewOrigin = viewRenderBox!.localToGlobal(Offset.zero);
       }
     } catch (_) {}
   }
@@ -271,28 +271,28 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
   void setBound() {
     try {
       if (boundKey.currentContext == null) return;
-      if (boundRenderBox == null) boundRenderBox = boundKey.currentContext.findRenderObject();
+      if (boundRenderBox == null) boundRenderBox = boundKey.currentContext!.findRenderObject() as RenderBox?;
 
       if (boundRenderBox != null) {
-        if (boundRenderBox.hasSize) {
-          if (boundWidth == -1) boundWidth = boundRenderBox.size.width + widget.customBoundWidth;
-          if (boundHeight == -1) boundHeight = boundRenderBox.size.height + widget.customBoundHeight;
+        if (boundRenderBox!.hasSize) {
+          if (boundWidth == -1) boundWidth = boundRenderBox!.size.width + widget.customBoundWidth;
+          if (boundHeight == -1) boundHeight = boundRenderBox!.size.height + widget.customBoundHeight;
 
           if (boundWidth != -1 && boundHeight != -1) normaliseConstraints();
         }
       }
-      if (boundOrigin == null) boundOrigin = boundRenderBox.localToGlobal(Offset.zero);
+      if (boundOrigin == null) boundOrigin = boundRenderBox!.localToGlobal(Offset.zero);
     } catch (_) {}
   }
 
   bool get boundIsSet => !(boundWidth == -1 || boundHeight == -1 || boundOrigin == null);
 
   void checkViewOrigin() {
-    if (viewOrigin != viewRenderBox.localToGlobal(Offset.zero) - deltaNotifier.value) viewOrigin = viewRenderBox.localToGlobal(Offset.zero) - deltaNotifier.value;
+    if (viewOrigin != viewRenderBox!.localToGlobal(Offset.zero) - deltaNotifier.value) viewOrigin = viewRenderBox!.localToGlobal(Offset.zero) - deltaNotifier.value;
   }
 
   void checkBoundOrigin() {
-    if (boundOrigin != boundRenderBox.localToGlobal(Offset.zero)) boundOrigin = boundRenderBox.localToGlobal(Offset.zero);
+    if (boundOrigin != boundRenderBox!.localToGlobal(Offset.zero)) boundOrigin = boundRenderBox!.localToGlobal(Offset.zero);
   }
 
   void normaliseConstraints() {
@@ -315,7 +315,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
     delta = deltaNotifier.value;
     beginDragPosition = dragStartDetails.localPosition;
 
-    if (onDragStart != null) onDragStart(dragStartDetails);
+    if (onDragStart != null) onDragStart!(dragStartDetails);
   }
 
   void updateDrag(dynamic dragUpdateDetails) {
@@ -330,7 +330,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
     updateDragPosition = dragUpdateDetails.localPosition;
     setDelta();
 
-    if (onDragUpdate != null) onDragUpdate(dragUpdateDetails);
+    if (onDragUpdate != null) onDragUpdate!(dragUpdateDetails);
   }
 
   void endDrag(dynamic dragEndDetails) {
@@ -339,7 +339,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
 
     if (_debugLevel > 0) print("EndDrag");
 
-    if (onDragEnd != null) onDragEnd(dragEndDetails);
+    if (onDragEnd != null) onDragEnd!(dragEndDetails);
 
     if (!useFlick) snap();
   }
@@ -352,9 +352,9 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
     if (beginDragPosition == null || updateDragPosition == null) return;
     if (!viewIsSet || !boundIsSet) return;
 
-    Offset _delta = delta + Offset(updateDragPosition.dx - beginDragPosition.dx, updateDragPosition.dy - beginDragPosition.dy);
-    normalisedConstraintsMin = constraintsMin - viewOrigin + boundOrigin;
-    normalisedConstraintsMax = constraintsMax - viewOrigin + boundOrigin - Offset(viewWidth, viewHeight);
+    Offset _delta = delta + Offset(updateDragPosition!.dx - beginDragPosition!.dx, updateDragPosition!.dy - beginDragPosition!.dy);
+    normalisedConstraintsMin = constraintsMin - viewOrigin! + boundOrigin!;
+    normalisedConstraintsMax = constraintsMax - viewOrigin! + boundOrigin! - Offset(viewWidth, viewHeight);
     if (_delta.dx < normalisedConstraintsMin.dx) _delta = Offset(normalisedConstraintsMin.dx - pow((_delta.dx - normalisedConstraintsMin.dx).abs(), flexibilityMin.dx) + 1.0, _delta.dy);
     if (_delta.dx > normalisedConstraintsMax.dx) _delta = Offset(normalisedConstraintsMax.dx + pow((_delta.dx - normalisedConstraintsMax.dx).abs(), flexibilityMax.dx) - 1.0, _delta.dy);
     if (_delta.dy < normalisedConstraintsMin.dy) _delta = Offset(_delta.dx, normalisedConstraintsMin.dy - pow((_delta.dy - normalisedConstraintsMin.dy).abs(), flexibilityMin.dy) + 1.0);
@@ -362,16 +362,16 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
 
     deltaNotifier.value = _delta;
 
-    if (onMove != null) onMove(deltaNotifier.value);
+    if (onMove != null) onMove!(deltaNotifier.value);
   }
 
-  double get maxLeft => boundOrigin.dx - viewOrigin.dx;
+  double get maxLeft => boundOrigin!.dx - viewOrigin!.dx;
 
-  double get maxRight => boundWidth + boundOrigin.dx - viewWidth - viewOrigin.dx;
+  double get maxRight => boundWidth + boundOrigin!.dx - viewWidth - viewOrigin!.dx;
 
-  double get maxTop => boundOrigin.dy - viewOrigin.dy;
+  double get maxTop => boundOrigin!.dy - viewOrigin!.dy;
 
-  double get maxBottom => boundHeight + boundOrigin.dy - viewHeight - viewOrigin.dy;
+  double get maxBottom => boundHeight + boundOrigin!.dy - viewHeight - viewOrigin!.dy;
 
   Future snap() async {
     checkViewAndBound();
@@ -387,7 +387,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
     updateDragPosition = null;
     overrideDelta = Offset.zero;
 
-    if (onSnap != null) onSnap(deltaNotifier.value);
+    if (onSnap != null) onSnap!(deltaNotifier.value);
   }
 
   Offset getSnapTarget() {
@@ -395,9 +395,9 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
       return deltaNotifier.value;
     else {
       Map<Offset, double> map = Map<Offset, double>();
-      snapTargets.forEach((SnapTarget snapTarget) {
+      snapTargets!.forEach((SnapTarget snapTarget) {
         if (Pivot.isClosestHorizontal(snapTarget.viewPivot) || Pivot.isClosestAny(snapTarget.viewPivot)) {
-          Offset left = Offset(0 - viewOrigin.dx + boundOrigin.dx, deltaNotifier.value.dy.clamp(maxTop, maxBottom));
+          Offset left = Offset(0 - viewOrigin!.dx + boundOrigin!.dx, deltaNotifier.value.dy.clamp(maxTop, maxBottom));
           map[left] = Point(deltaNotifier.value.dx, deltaNotifier.value.dy).distanceTo(Point(left.dx, left.dy));
           if (_debugLevel > 1) {
             print("--------------------");
@@ -413,7 +413,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
             print(left);
             print("--------------------");
           }
-          Offset right = Offset(boundWidth + -viewOrigin.dx + boundOrigin.dx - viewWidth, deltaNotifier.value.dy.clamp(maxTop, maxBottom));
+          Offset right = Offset(boundWidth + -viewOrigin!.dx + boundOrigin!.dx - viewWidth, deltaNotifier.value.dy.clamp(maxTop, maxBottom));
           map[right] = Point(deltaNotifier.value.dx, deltaNotifier.value.dy).distanceTo(Point(right.dx, right.dy));
           if (_debugLevel > 1) {
             print("--------------------");
@@ -431,7 +431,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
           }
         }
         if (Pivot.isClosestVertical(snapTarget.viewPivot) || Pivot.isClosestAny(snapTarget.viewPivot)) {
-          Offset top = Offset(deltaNotifier.value.dx.clamp(maxLeft, maxRight), 0 - viewOrigin.dy + boundOrigin.dy);
+          Offset top = Offset(deltaNotifier.value.dx.clamp(maxLeft, maxRight), 0 - viewOrigin!.dy + boundOrigin!.dy);
           map[top] = Point(deltaNotifier.value.dx, deltaNotifier.value.dy).distanceTo(Point(top.dx, top.dy));
           if (_debugLevel > 1) {
             print("--------------------");
@@ -447,7 +447,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
             print(top);
             print("--------------------");
           }
-          Offset bottom = Offset(deltaNotifier.value.dx.clamp(maxLeft, maxRight), boundHeight + -viewOrigin.dy + boundOrigin.dy - viewHeight);
+          Offset bottom = Offset(deltaNotifier.value.dx.clamp(maxLeft, maxRight), boundHeight + -viewOrigin!.dy + boundOrigin!.dy - viewHeight);
           map[bottom] = Point(deltaNotifier.value.dx, deltaNotifier.value.dy).distanceTo(Point(bottom.dx, bottom.dy));
           if (_debugLevel > 1) {
             print("--------------------");
@@ -465,7 +465,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
           }
         }
         if (!Pivot.isClosestHorizontal(snapTarget.viewPivot) && !Pivot.isClosestVertical(snapTarget.viewPivot) && !Pivot.isClosestAny(snapTarget.viewPivot)) {
-          Offset offset = Offset(boundWidth * snapTarget.boundPivot.dx + boundOrigin.dx - viewWidth * snapTarget.viewPivot.dx - viewOrigin.dx, boundHeight * snapTarget.boundPivot.dy + boundOrigin.dy - viewHeight * snapTarget.viewPivot.dy - viewOrigin.dy);
+          Offset offset = Offset(boundWidth * snapTarget.boundPivot.dx + boundOrigin!.dx - viewWidth * snapTarget.viewPivot.dx - viewOrigin!.dx, boundHeight * snapTarget.boundPivot.dy + boundOrigin!.dy - viewHeight * snapTarget.viewPivot.dy - viewOrigin!.dy);
           if (_debugLevel > 1) {
             print("--------------------");
             print(snapTarget.boundPivot);
@@ -531,7 +531,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
     boundHeight = -1;
     boundWidth = -1;
     boundOrigin = null;
-    if (useFlick && flickController.currentState != null) flickController.currentState.softReset(_constraintsMin, _constraintsMax);
+    if (useFlick && flickController.currentState != null) flickController.currentState!.softReset(_constraintsMin, _constraintsMax);
   }
 
   Widget wrapper() {
@@ -571,7 +571,7 @@ class SnapControllerState extends State<SnapController> with TickerProviderState
 
     return ValueListenableBuilder(
       child: useCache ? uiChild : null,
-      builder: (BuildContext context, Offset delta, Widget cachedChild) {
+      builder: (BuildContext context, Offset delta, Widget? cachedChild) {
         return Transform.translate(
           offset: delta,
           child: useCache ? cachedChild : wrapper(),

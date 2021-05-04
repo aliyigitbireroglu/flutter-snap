@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 
 import 'package:snap/snap.dart';
 
-List<GlobalKey> bounds = List<GlobalKey>();
-List<GlobalKey> views = List<GlobalKey>();
+List<GlobalKey> bounds = [];
+List<GlobalKey> views = [];
 
 void main() => runApp(MyApp());
 
@@ -28,9 +28,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -301,7 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(title: Text(widget.title!)),
       body: PageView(
         onPageChanged: (int index) {
           if (index == 1)
